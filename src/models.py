@@ -171,3 +171,91 @@ class AuthManager:
 
         return False, f"User '{username}' not found."
 
+
+class TodoManager:
+    """Manages to-do list operations."""
+
+    def __init__(self, todos_file: Path):
+        """Initialize TodoManager with path to todos JSON file.
+        
+        Args:
+            todos_file: Path to the todos.json file.
+        """
+        self.todos_file = todos_file
+
+    def _load_todos(self) -> list:
+        """Load todos from JSON file.
+        
+        Returns:
+            List of todo dictionaries.
+        """
+        if not self.todos_file.exists():
+            return []
+        try:
+            with open(self.todos_file, "r") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+    def _save_todos(self, todos: list) -> None:
+        """Save todos to JSON file.
+        
+        Args:
+            todos: List of todo dictionaries to save.
+        """
+        self.todos_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.todos_file, "w") as f:
+            json.dump(todos, f, indent=2)
+
+    def create_item(
+        self,
+        title: str,
+        details: str,
+        priority: Priority,
+        owner: str,
+    ) -> tuple[bool, str]:
+        """Create a new to-do item.
+        
+        Args:
+            title: Title of the to-do item.
+            details: Detailed description of the to-do.
+            priority: Priority level (HIGH, MID, LOW).
+            owner: Username of the owner.
+            
+        Returns:
+            Tuple of (success: bool, message: str).
+        """
+        try:
+            # Create new TodoItem
+            todo = TodoItem(
+                title=title,
+                details=details,
+                priority=priority,
+                owner=owner,
+            )
+
+            # Load existing todos and add the new one
+            todos = self._load_todos()
+            todos.append(todo.to_dict())
+            self._save_todos(todos)
+
+            return True, f"Task '{title}' created successfully with ID: {todo.id}"
+        except Exception as e:
+            return False, f"Error creating task: {str(e)}"
+
+    def view_all(self, username: str) -> list:
+        """List all to-do items belonging to a specific user.
+        
+        Args:
+            username: Username to filter tasks by.
+            
+        Returns:
+            List of tuples containing (id, title) for user's tasks.
+        """
+        todos = self._load_todos()
+        user_todos = [
+            (todo["id"], todo["title"])
+            for todo in todos
+            if todo["owner"] == username
+        ]
+        return user_todos
