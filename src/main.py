@@ -4,11 +4,16 @@ import json
 import os
 from pathlib import Path
 
+from models import AuthManager
+
 
 # Data file paths
 DATA_DIR = Path(__file__).parent.parent / "data"
 USERS_FILE = DATA_DIR / "users.json"
 TODOS_FILE = DATA_DIR / "todos.json"
+
+# Initialize AuthManager
+auth_manager = AuthManager(USERS_FILE)
 
 
 def ensure_data_files():
@@ -43,8 +48,13 @@ def handle_login():
     username = input("Username: ").strip()
     password = input("Password: ").strip()
 
-    # TODO: Implement authentication logic
-    print(f"Login attempt for user: {username}")
+    success, message = auth_manager.login(username, password)
+    if success:
+        print(f"\n✓ {message}")
+        return username  # Return logged-in username
+    else:
+        print(f"\n✗ {message}")
+        return None
 
 
 def handle_signup():
@@ -62,8 +72,11 @@ def handle_signup():
         print("Passwords do not match.")
         return
 
-    # TODO: Implement sign-up logic
-    print(f"Sign up attempt for user: {username}")
+    success, message = auth_manager.sign_up(username, password)
+    if success:
+        print(f"\n✓ {message}")
+    else:
+        print(f"\n✗ {message}")
 
 
 def main():
@@ -74,7 +87,11 @@ def main():
         choice = show_prelogin_menu()
 
         if choice == "1":
-            handle_login()
+            logged_in_user = handle_login()
+            if logged_in_user:
+                # TODO: Show post-login menu and handle authenticated operations
+                print(f"User {logged_in_user} is now logged in.")
+                print("(Post-login menu will be implemented in Task 6)")
         elif choice == "2":
             handle_signup()
         elif choice == "3":
