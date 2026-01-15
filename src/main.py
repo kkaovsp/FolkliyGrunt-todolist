@@ -139,6 +139,122 @@ def handle_view_all_tasks(username: str) -> None:
         print(f"  {idx}. [{task_id[:8]}...] {title}")
 
 
+def handle_view_details(username: str) -> None:
+    """Display full details of a specific task.
+    
+    Args:
+        username: The currently logged-in user.
+    """
+    print("\n--- View Task Details ---")
+    
+    # Get task ID from user
+    task_id = input("Enter task ID: ").strip()
+    
+    success, task = todo_manager.view_details(task_id)
+    if not success:
+        print("✗ Task not found.")
+        return
+    
+    # Verify ownership
+    if task["owner"] != username:
+        print("✗ You don't have permission to view this task.")
+        return
+    
+    # Display task details
+    print("\n" + "=" * 40)
+    print(f"Title:       {task['title']}")
+    print(f"Details:     {task['details']}")
+    print(f"Priority:    {task['priority']}")
+    print(f"Status:      {task['status']}")
+    print(f"Owner:       {task['owner']}")
+    print(f"Created:     {task['created_at']}")
+    print(f"Updated:     {task['updated_at']}")
+    print("=" * 40)
+
+
+def handle_mark_completed(username: str) -> None:
+    """Mark a task as completed.
+    
+    Args:
+        username: The currently logged-in user.
+    """
+    print("\n--- Mark Task as Completed ---")
+    
+    # Get task ID from user
+    task_id = input("Enter task ID: ").strip()
+    
+    success, task = todo_manager.view_details(task_id)
+    if not success:
+        print("✗ Task not found.")
+        return
+    
+    # Verify ownership
+    if task["owner"] != username:
+        print("✗ You don't have permission to modify this task.")
+        return
+    
+    # Check if already completed
+    if task["status"] == "COMPLETED":
+        print("✗ Task is already completed.")
+        return
+    
+    # Mark as completed
+    success, message = todo_manager.mark_as_completed(task_id)
+    if success:
+        print(f"✓ {message}")
+    else:
+        print(f"✗ {message}")
+
+
+def handle_edit_task(username: str) -> None:
+    """Edit an existing task.
+    
+    Args:
+        username: The currently logged-in user.
+    """
+    print("\n--- Edit Task ---")
+    
+    # Get task ID from user
+    task_id = input("Enter task ID: ").strip()
+    
+    success, task = todo_manager.view_details(task_id)
+    if not success:
+        print("✗ Task not found.")
+        return
+    
+    # Verify ownership
+    if task["owner"] != username:
+        print("✗ You don't have permission to modify this task.")
+        return
+    
+    # Collect updates
+    print("\nLeave blank to keep current value.")
+    new_title = input(f"New title [{task['title']}]: ").strip() or None
+    new_details = input(f"New details [{task['details']}]: ").strip() or None
+    
+    new_priority = None
+    if input("Change priority? (y/n): ").strip().lower() == "y":
+        print("Priority levels: HIGH, MID, LOW")
+        priority_input = input("New priority: ").strip().upper()
+        try:
+            new_priority = Priority[priority_input]
+        except KeyError:
+            print(f"Invalid priority '{priority_input}'. Using existing priority.")
+    
+    # Update task
+    success, message = todo_manager.edit_item(
+        task_id,
+        title=new_title,
+        details=new_details,
+        priority=new_priority,
+    )
+    
+    if success:
+        print(f"✓ {message}")
+    else:
+        print(f"✗ {message}")
+
+
 def show_postlogin_menu() -> str:
     """Display the post-login menu and return user's choice."""
     print("\n" + "=" * 40)
@@ -146,14 +262,17 @@ def show_postlogin_menu() -> str:
     print("=" * 40)
     print("[1] Add Task")
     print("[2] View All Tasks")
-    print("[3] Logout")
+    print("[3] View Task Details")
+    print("[4] Edit Task")
+    print("[5] Mark Task as Completed")
+    print("[6] Logout")
     print("=" * 40)
 
     while True:
-        choice = input("\nEnter your choice (1-3): ").strip()
-        if choice in ["1", "2", "3"]:
+        choice = input("\nEnter your choice (1-6): ").strip()
+        if choice in ["1", "2", "3", "4", "5", "6"]:
             return choice
-        print("Invalid choice. Please enter 1, 2, or 3.")
+        print("Invalid choice. Please enter 1-6.")
 
 
 def handle_postlogin_menu(username: str) -> bool:
@@ -173,6 +292,12 @@ def handle_postlogin_menu(username: str) -> bool:
         elif choice == "2":
             handle_view_all_tasks(username)
         elif choice == "3":
+            handle_view_details(username)
+        elif choice == "4":
+            handle_edit_task(username)
+        elif choice == "5":
+            handle_mark_completed(username)
+        elif choice == "6":
             print(f"\n✓ Logged out successfully. Goodbye, {username}!")
             return False
 

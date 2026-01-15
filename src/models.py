@@ -259,3 +259,77 @@ class TodoManager:
             if todo["owner"] == username
         ]
         return user_todos
+
+    def view_details(self, task_id: str) -> tuple[bool, Optional[dict]]:
+        """Display full details of a specific task.
+        
+        Args:
+            task_id: ID of the task to view.
+            
+        Returns:
+            Tuple of (success: bool, task_dict or None).
+        """
+        todos = self._load_todos()
+        for todo in todos:
+            if todo["id"] == task_id:
+                return True, todo
+        return False, None
+
+    def mark_as_completed(self, task_id: str) -> tuple[bool, str]:
+        """Mark a task as completed.
+        
+        Args:
+            task_id: ID of the task to mark as completed.
+            
+        Returns:
+            Tuple of (success: bool, message: str).
+        """
+        try:
+            todos = self._load_todos()
+            for todo in todos:
+                if todo["id"] == task_id:
+                    todo["status"] = Status.COMPLETED.value
+                    todo["updated_at"] = datetime.now().isoformat()
+                    self._save_todos(todos)
+                    return True, f"Task marked as completed."
+            return False, f"Task with ID '{task_id}' not found."
+        except Exception as e:
+            return False, f"Error marking task as completed: {str(e)}"
+
+    def edit_item(
+        self,
+        task_id: str,
+        title: Optional[str] = None,
+        details: Optional[str] = None,
+        priority: Optional[Priority] = None,
+    ) -> tuple[bool, str]:
+        """Edit an existing task.
+        
+        Args:
+            task_id: ID of the task to edit.
+            title: New title (optional).
+            details: New details (optional).
+            priority: New priority (optional).
+            
+        Returns:
+            Tuple of (success: bool, message: str).
+        """
+        try:
+            todos = self._load_todos()
+            for todo in todos:
+                if todo["id"] == task_id:
+                    # Update fields if provided
+                    if title is not None:
+                        todo["title"] = title
+                    if details is not None:
+                        todo["details"] = details
+                    if priority is not None:
+                        todo["priority"] = priority.value
+                    
+                    # Update the timestamp
+                    todo["updated_at"] = datetime.now().isoformat()
+                    self._save_todos(todos)
+                    return True, "Task updated successfully."
+            return False, f"Task with ID '{task_id}' not found."
+        except Exception as e:
+            return False, f"Error updating task: {str(e)}"
