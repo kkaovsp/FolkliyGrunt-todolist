@@ -38,3 +38,9 @@ Stored in `todos.json`. Note that `id` must be unique (UUID).
 - [ ] **2. CLI Interface - Basic Interaction**
     - Implement a main application loop.
     - Create a "Pre-Login" menu: Options for [1] Login, [2] Sign Up, [3] Exit.
+
+- [ ] **3. Authentication Logic (AuthManager)**
+    - Implement AuthManager class to handle user authentication.
+    - **Sign Up:** Create a function to register new users and save them to `users.json`. Check if the username already exists.
+    - **Login:** Create a function to verify username/password against `users.json`.
+    - Integrate these functions into the "Pre-Login" menu options created in Task 2.
