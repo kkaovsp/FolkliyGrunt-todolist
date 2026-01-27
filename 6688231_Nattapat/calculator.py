@@ -96,3 +96,22 @@ def calculate(operation: str, a: float, b: float) -> float:
     
     return operations[operation](a, b)
 
+
+def calculate_velocity(distance: float, time: float) -> float:
+    """
+    Calculate velocity given distance and time.
+    
+    Args:
+        distance: Distance traveled
+        time: Time elapsed
+        
+    Returns:
+        Velocity (distance / time)
+        
+    Raises:
+        ValueError: If time is not greater than zero
+    """
+    if time <= 0:
+        raise ValueError("Time must be greater than zero")
+    return distance / time
+
