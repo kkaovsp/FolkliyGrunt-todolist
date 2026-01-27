@@ -26,11 +26,6 @@ def divide(a, b):
         raise ValueError("Cannot divide by zero")
     return a / b
 
-def velocity(distance, time):
-    if time == 0:
-        raise ValueError("Time cannot be zero")
-    return distance / time
-
 
 if __name__ == "__main__":
     # Example usage
