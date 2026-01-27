@@ -1,3 +1,4 @@
+
 """
 Simple calculator module supporting basic arithmetic operations.
 """
@@ -94,3 +95,4 @@ def calculate(operation: str, a: float, b: float) -> float:
         raise ValueError(f"Invalid operation: {operation}. Use '+', '-', '*', '/', or their full names.")
     
     return operations[operation](a, b)
+
