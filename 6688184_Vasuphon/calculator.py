@@ -30,13 +30,23 @@ def main():
             print("Invalid operation. Please use +, -, *, /, or v")
             continue
 
-        try:
-            a = float(input("Enter first number: "))
-            b = float(input("Enter second number: "))
-        except ValueError:
-            print("Invalid number. Please enter numeric values.")
-            continue
+        if op == 'v':
+            try:
+                distance = float(input("Enter distance: "))
+                time = float(input("Enter time: "))
+                result = velocity(distance, time)
+                print(f"Velocity: {result}")
+            except ValueError as e:
+                print(e)
+        else:
+            try:
+                a = float(input("Enter first number: "))
+                b = float(input("Enter second number: "))
+            except ValueError:
+                print("Invalid number. Please enter numeric values.")
+                continue
 
+<<<<<<< HEAD
         try:
             if op == '+':
                 result = add(a, b)
@@ -48,10 +58,22 @@ def main():
                 result = divide(a, b)
             elif op == 'v':
                 result = velocity(a, b)
+=======
+            try:
+                if op == '+':
+                    result = add(a, b)
+                elif op == '-':
+                    result = subtract(a, b)
+                elif op == '*':
+                    result = multiply(a, b)
+                elif op == '/':
+                    result = divide(a, b)
 
-            print(f"Result: {result}")
-        except ValueError as e:
-            print(e)
+                print(f"Result: {result}")
+            except ValueError as e:
+                print(e)
+>>>>>>> parent of e5c179e (Revert "Add velocity calculation to calculator")
+
 
 if __name__ == "__main__":
     main()
