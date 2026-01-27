@@ -16,4 +16,6 @@ def calculate_velocity(distance, time):
     if time <= 0:
         raise ValueError("Time must be greater than zero")
     return distance / time
-    # Update calculator implementation
+    
+# Update calculator implementation for lab week 3
+
