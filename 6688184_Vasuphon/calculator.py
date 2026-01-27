@@ -12,17 +12,22 @@ def divide(a, b):
         raise ValueError("Cannot divide by zero")
     return a / b
 
+def velocity(distance, time):
+    if time == 0:
+        raise ValueError("Time cannot be zero")
+    return distance / time
+
 def main():
     while True:
         print("\nSimple Calculator")
-        print("Operations: +, -, *, /")
+        print("Operations: +, -, *, /, v (velocity)")
         op = input("Enter operation (or 'q' to quit): ").strip()
 
         if op.lower() == 'q':
             break
 
-        if op not in ['+', '-', '*', '/']:
-            print("Invalid operation. Please use +, -, *, or /")
+        if op not in ['+', '-', '*', '/', 'v']:
+            print("Invalid operation. Please use +, -, *, /, or v")
             continue
 
         try:
@@ -41,6 +46,8 @@ def main():
                 result = multiply(a, b)
             elif op == '/':
                 result = divide(a, b)
+            elif op == 'v':
+                result = velocity(a, b)
 
             print(f"Result: {result}")
         except ValueError as e:
