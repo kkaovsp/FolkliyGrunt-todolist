@@ -12,10 +12,3 @@ def divide(a, b):
         raise ValueError("Cannot divide by zero")
     return a / b
 
-def calculate_velocity(distance, time):
-    if time <= 0:
-        raise ValueError("Time must be greater than zero")
-    return distance / time
-    
-# Update calculator implementation for lab week 3
-
