@@ -1,0 +1,29 @@
+C4Component
+    title Component diagram for ICT To Do List - Web API
+
+    %% External Containers
+    Container(webapp, "Web App", "React", "User Interface")
+    ContainerDb(db, "Database", "PostgreSQL", "Data Storage")
+    System_Ext(mycourses, "MyCourses", "External System")
+
+    Container_Boundary(api_boundary, "Web API") {
+        Component(auth, "Authentication and Authorization", "FastAPI Component", "Handles login and access control")
+        Component(task_mgt, "Task Management", "FastAPI Component", "Handles CRUD operations")
+        Component(sync_orch, "MyCourses Sync Orchestrator", "Python Component", "Manages the sync workflow")
+        Component(mapping, "Mapping Component", "Python Component", "Converts external data to internal model")
+        Component(data_access, "Data Access", "SQLAlchemy Component", "Provides repository functions for Database access")
+    }
+
+    %% Relationships
+    Rel(webapp, auth, "Authenticates via", "JSON/HTTPS")
+    Rel(webapp, task_mgt, "Manages tasks via", "JSON/HTTPS")
+    Rel(webapp, sync_orch, "Triggers sync via", "JSON/HTTPS")
+    
+    Rel(sync_orch, mycourses, "Calls services", "HTTPS/JSON")
+    Rel(sync_orch, mapping, "Uses to convert data")
+    
+    Rel(task_mgt, data_access, "Uses")
+    Rel(sync_orch, data_access, "Updates tasks via")
+    Rel(data_access, db, "Executes SQL in")
+
+    UpdateLayoutConfig($c4ShapeInRow="2")

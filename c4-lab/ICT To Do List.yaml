@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/SlavaVedernikov/C4InterFlow/refs/heads/master/C4InterFlow/schema.json
+ICTToDoSystem:
+  SoftwareSystems:
+    IctToDoListSystem:
+      Containers:
+        WebAPI:
+          Label: Web API.
+          Components:
+            AuthenticationandAuthorization: {}
+            TaskManagement: {}
+            MyCoursesSyncOrchestrator: {}
+            MappingComponent: {}
+            DataAccess: {}
+          Interfaces:
+            Sync:
+              Flows:
+                - Type: Use
+                  Expression: Containers.MyCoursesConnector.Interfaces.Fetch
+            MakeAPI:
+              Description: Interface for Web API.
+            NewInterface: {}
+            ReadData:
+              Flows:
+                - Type: Use
+        MobileApp:
+          Interfaces:
+            Use:
+              Description: Interface for Mobile App
+              Flows:
+                - Type: Use
+            MakeAPi:
+              Flows:
+                - Type: Use
+                  Expression: Containers.WebAPI.Interfaces.MakeAPI
+        WebApp:
+          Interfaces:
+            Use:
+              Description: Interface for Web App
+        Database:
+          Interfaces:
+            NewInterface:
+              Flows:
+                - Type: Use
+                  Expression: Database.Interfaces.ReadData
+            ReadData:
+              Description: Interface for Database
+        MyCoursesConnector:
+          Interfaces:
+            Fetch:
+              Description: Interface for MyCourses Connector
+              Flows:
+                - Type: Use
+    MyCourses:
+      Interfaces:
+        Fetch:
+          Flows:
+            - Type: Use
+              Expression: ..IctToDoListSystem.Containers.MyCoursesConnector.Interfaces.Fetch
+  Actors:
+    Student:
+      Activities:
+        Use:
+          Flows:
+            - Type: Use
+              Expression: ..IctToDoListSystem.Containers.WebApp.Interfaces.Use
+    Instructor:
+      Activities:
+        Use:
+          Flows:
+            - Type: Use
+              Expression: ..IctToDoListSystem.Containers.WebApp.Interfaces.Use
+    SystemAdministrator:
+      Activities:
+        Use:
+          Flows:
+            - Type: Use
+              Expression: ..IctToDoListSystem.Containers.WebApp.Interfaces.Use

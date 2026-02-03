@@ -1,3 +1,47 @@
+ c4-lab
+%% ICT To Do List - C4 Context diagram (Mermaid)
+%% Generated from system_description.md
+
+flowchart LR
+  %% People
+  student(["Student\n<small>Manages tasks, views assignments</small>"])
+  instructor(["Instructor\n<small>Views course deadlines</small>"])
+  admin(["System Administrator\n<small>Manages settings and monitors sync health</small>"])
+
+  %% System boundary
+  subgraph ICT_To_Do_List["ICT To Do List"]
+    direction TB
+    webapp(["Web App\n<small>React SPA</small>"])
+    mobile(["Mobile App\n<small>Flutter</small>"])
+    webapi(["Web API\n<small>Python FastAPI (REST/JSON)</small>"])
+    db(["PostgreSQL\n<small>Users, tasks, sync history</small>"])
+  end
+
+  %% External systems
+  mycourses(["MyCourses\n<small>External course and assignment service</small>"])
+
+  %% Relationships
+  student -->|Uses (HTTPS/JSON)| webapp
+  student -->|Uses (HTTPS/JSON)| mobile
+  webapp -->|Calls (HTTPS/JSON)| webapi
+  mobile -->|Calls (HTTPS/JSON)| webapi
+  webapi -->|Reads/Writes (SQL)| db
+  webapi -->|Syncs with (HTTPS/JSON)| mycourses
+  admin -->|Uses Admin UI (HTTPS)| webapp
+  instructor -->|Uses for course deadlines (HTTPS)| webapp
+
+  %% Styling
+  classDef person fill:#f6f8ff,stroke:#0366d6,stroke-width:1px;
+  classDef system fill:#e8f4ea,stroke:#2cbe4e,stroke-width:1px;
+  classDef external fill:#fff4e6,stroke:#ff8c00,stroke-width:1px;
+  class student,instructor,admin person;
+  class webapp,mobile,webapi,db system;
+  class mycourses external;
+
+  %% Notes
+  webapi ---|Sync orchestration, mapping, auth| mycourses
+  webapi ---|Stores task links to MyCourses assignment IDs| db
+
 C4Context
 title System Context diagram for ICT To Do List
 Person(student, "Student", "Manages personal tasks and tracks course work by syncing assignments from MyCourses")
@@ -31,3 +75,4 @@ Rel(mobile_app, web_api, "HTTPS / JSON (REST) - task CRUD, sync requests, authen
 Rel(web_api, db, "Reads and writes data (SQL via ORM e.g. SQLAlchemy) - store tasks, users, sync history")
 Rel(web_api, connector, "Internal interface (direct function call or internal HTTP) - trigger MyCourses sync & mapping")
 Rel(connector, mycourses, "HTTPS / JSON - retrieve courses, assignments, and submission status")
+ c4-lab
